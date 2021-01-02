@@ -5,7 +5,7 @@ class PlayerColor(Enum):
     BOTTOM = 1
 
     def __str__(self):
-        return self.name + " Player"
+        return "Player "+self.name
 
 class Player():
     """

@@ -3,10 +3,16 @@ from controller.game_controller import GameController
 if __name__ == "__main__":
 
     controller = GameController()
-    controller.state.print_board()
-    controller.print_possible_actions()
-    # possible_actions = get_possible_actions(controller.state)
-
+    while True:
+        controller.state.print_board()
+        controller.print_possible_actions()
+        possible_actions = controller.state.get_possible_action_player()
+        selection = int(input('Select action: '))
+        selected_action = possible_actions[selection]
+        print("Selected action: ", selected_action)
+        controller.result_function(selected_action)
+        for player in controller.state.board.player_list:
+            print(player.color, ": ", player.score, end=", ")
     
     # state = controller.state
     # while True:

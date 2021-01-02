@@ -15,23 +15,28 @@ class GameController():
         all_possible_action = self.state.get_possible_action_player()
         index = 0
 
-        print("player_color, pit_index, action, kazan_p, opponent_k_p, a_seed_count, m_seed_count")
+        print("kazan_p, opponent_k_p, a_seed_count, m_seed_count")
         for move in all_possible_action:
             print(index, move)
             index += 1
         return all_possible_action
 
-    def result_function(self,state,action): 
-        new_state = deepcopy(state)
+    def result_function(self,action): 
+        
+        # new_state = deepcopy(state)
 
-        if action['action'] == 'tuzdik':
-            pit_index = action['pit_index']
-            player_color = action['player_index']
-            new_state.activate_tuzdik(pit_index, player_color)
+        # if action['action'] == 'tuzdik':
+        #     pit_index = action['pit_index']
+        #     player_color = action['player_index']
+        #     new_state.activate_tuzdik(pit_index, player_color)
 
-        if action['action'] == 'move':
-            pit_index = action['pit_index']
-            player_color = action['player_index']
-            new_state.move(pit_index, player_color)
-        new_state.change_turn()
-        return new_state
+        # if action['action'] == 'move':
+        #     pit_index = action['pit_index']
+        #     player_color = action['player_index']
+        #     new_state.move(pit_index, player_color)
+
+
+        self.state.complete_action(action)
+        self.state.change_turn()
+        # new_state.change_turn()
+        return self
