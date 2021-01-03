@@ -1,6 +1,7 @@
 from model.state import State
 from model.player import PlayerColor
 from copy import deepcopy
+from ai_modules.classic_algorithm import MinimaxAgent
 
 class GameController():
     def __init__(self):
@@ -10,6 +11,7 @@ class GameController():
         self.possible_action_keys = []
         self.two_players = False
         self.player_vs_ai_white = False
+        self.ai_agent = MinimaxAgent(4, PlayerColor.TOP)
     
     def print_possible_actions(self):
         all_possible_action = self.state.get_possible_action_player()
@@ -20,23 +22,3 @@ class GameController():
             print(index, move)
             index += 1
         return all_possible_action
-
-    def result_function(self,action): 
-        
-        # new_state = deepcopy(state)
-
-        # if action['action'] == 'tuzdik':
-        #     pit_index = action['pit_index']
-        #     player_color = action['player_index']
-        #     new_state.activate_tuzdik(pit_index, player_color)
-
-        # if action['action'] == 'move':
-        #     pit_index = action['pit_index']
-        #     player_color = action['player_index']
-        #     new_state.move(pit_index, player_color)
-
-
-        self.state.complete_action(action)
-        self.state.change_turn()
-        # new_state.change_turn()
-        return self

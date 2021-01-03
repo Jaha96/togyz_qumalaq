@@ -225,5 +225,18 @@ class Board():
 
         return list_possible_move
 
+    def complete_atsurau(self, player_index):
+        player = self.player_list[player_index]
+        opponent_player_index = self.get_opponent_player_index(player.color)
+        opponent_player = self.player_list[opponent_player_index]
 
-
+        kazan_point = 0
+        opponent_kazan_point = 0
+        for pit in opponent_player.pits:
+            opponent_kazan_point += pit.seed_count
+            self.player_list[opponent_player_index].pits[pit.pit_index - 1].seed_count = 0
+        
+        self.player_list[player_index].score += kazan_point
+        self.player_list[opponent_player_index].score += opponent_kazan_point
+        
+        return self
