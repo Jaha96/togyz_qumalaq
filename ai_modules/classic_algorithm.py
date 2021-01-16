@@ -1,8 +1,4 @@
 from random import shuffle
-# Import Visualiser class from module visualiser
-# from visualiser.visualiser import Visualiser as vs
-from visualiser import Visualiser as vs
-
 from model.player import PlayerColor
 from model.state import State
 from ai_modules.ai_elements import AIElements
@@ -27,10 +23,8 @@ class MinimaxAgent():
         """
         list_action = AIElements.get_possible_action(state)
         eval_score, selected_action_index = self._minimax(0,state,True)
-        vs.make_animation("fibonacci.gif", delay=2)
         return (eval_score,list_action[selected_action_index])
     
-    @vs(node_properties_kwargs={"shape":"record", "color":"#f57542", "style":"filled", "fillcolor":"grey"})
     def _minimax(self, current_depth, state, is_max_turn):
 
         if current_depth == self.max_depth or state.is_terminal():

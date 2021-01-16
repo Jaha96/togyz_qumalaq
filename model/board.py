@@ -125,7 +125,7 @@ class Board():
                     if self.player_list[color_index].pits[pit_index].seed_count % 2 == 0:
                         kazan_point += self.player_list[color_index].pits[pit_index].seed_count
                         self.player_list[color_index].pits[pit_index].seed_count = 0
-                    elif self.player_list[color_index].pits[pit_index].seed_count == 3 and self.player_list[color_index].pits[pit_index].pit_index !=9 and self.player_list[player_index].tuzdik == False:
+                    elif is_tuzdik_possible(self, color_index, player_index, pit_index):
                         action = "tuzdik"
                         kazan_point += self.player_list[color_index].pits[pit_index].seed_count
                         self.player_list[color_index].pits[pit_index].seed_count = 0
@@ -147,6 +147,9 @@ class Board():
         self.player_list[opponent_index].score += opponent_kazan_point
 
         return self
+
+    
+
 
     def possible_move(self,player_color: PlayerColor):
         """
@@ -204,10 +207,12 @@ class Board():
                         if temp_board.player_list[color_index].pits[pit_index].seed_count % 2 == 0:
                             kazan_point += temp_board.player_list[color_index].pits[pit_index].seed_count
                             temp_board.player_list[color_index].pits[pit_index].seed_count = 0
-                        elif temp_board.player_list[color_index].pits[pit_index].seed_count == 3 and temp_board.player_list[color_index].pits[pit_index].pit_index !=9 and temp_board.player_list[player_index].tuzdik == False:
+                        elif is_tuzdik_possible(temp_board, color_index, player_index, pit_index):
                             action = "tuzdik"
                             kazan_point += temp_board.player_list[color_index].pits[pit_index].seed_count
                             temp_board.player_list[color_index].pits[pit_index].seed_count = 0
+                            temp_board.player_list[color_index].pits[pit_index].is_tuzdik = True
+                            temp_board.player_list[player_index].tuzdik = True
                         else:
                             miss_seed_count += 1
                     else:
@@ -219,24 +224,39 @@ class Board():
                     pit_index = 0
                 else:
                     pit_index += 1
+            
+            action, kazan_point = check_and_complete_atsurau(temp_board, player, action, kazan_point)
 
             move = Move(player_color, pit.pit_index, action, kazan_point, opponent_kazan_point, advantage_seed_count, miss_seed_count)
             list_possible_move.append(move)
 
         return list_possible_move
 
-    def complete_atsurau(self, player_index):
-        player = self.player_list[player_index]
-        opponent_player_index = self.get_opponent_player_index(player.color)
-        opponent_player = self.player_list[opponent_player_index]
+def check_and_complete_atsurau(board: Board, player: Player, action, kazan_point):
+        opponent_player = board.get_player_by_color(player.enemy_color)
+        player_index = board.get_player_index_by_color(player.color)
+        opponent_seed_count = 0
+        for o_pit in opponent_player.pits:
+            opponent_seed_count += o_pit.seed_count
 
-        kazan_point = 0
-        opponent_kazan_point = 0
-        for pit in opponent_player.pits:
-            opponent_kazan_point += pit.seed_count
-            self.player_list[opponent_player_index].pits[pit.pit_index - 1].seed_count = 0
-        
-        self.player_list[player_index].score += kazan_point
-        self.player_list[opponent_player_index].score += opponent_kazan_point
-        
-        return self
+        # Opponent has no more moves, In this case execute atsurau
+        if opponent_seed_count == 0:
+            action = "atsurau"
+            for pit in player.pits:
+                kazan_point += pit.seed_count
+                board.player_list[player_index].pits[pit.pit_index - 1].seed_count = 0
+            
+        return action, kazan_point
+
+def is_tuzdik_possible(board: Board, opponent_index, player_index, pit_index):
+        seed_count = board.player_list[opponent_index].pits[pit_index].seed_count
+        pits = board.player_list[opponent_index].pits
+        tuzdik = board.player_list[player_index].tuzdik
+        opponent_tuzdik_index = -1
+        for pit in board.player_list[player_index].pits:
+            if pit.is_tuzdik == True:
+                opponent_tuzdik_index = pit.pit_index
+        pit_number = pit_index + 1
+        if seed_count == 3 and pit_number != 9 and tuzdik == False and pit_number != opponent_tuzdik_index:
+            return True
+        return False

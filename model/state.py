@@ -61,15 +61,9 @@ class State:
         if top_player.score > 81 or bottom_player.score > 81:
             return True
         
-        if top_player.score == 81 or bottom_player.score == 81:
+        if top_player.score == 81 and bottom_player.score == 81:
             return True
 
-        possible_moves = self.get_possible_action_player()
-        if len(possible_moves) < 1:
-            player_index = self.get_player_index()
-            self.board.complete_atsurau(player_index)
-            return True
-        
         return False
     
     def get_winner(self, player_color: PlayerColor):
